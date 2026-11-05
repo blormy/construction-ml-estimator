@@ -1,0 +1,95 @@
+package httpapi
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"time"
+)
+
+type BoxFurnaceRequest struct {
+	Tag                 string   `json:"tag"`
+	Duty                *float64 `json:"duty"`
+	StandardGasFlowRate *float64 `json:"standard_gas_flow_rate"`
+	DesignGaugePressure *float64 `json:"design_gauge_pressure,omitempty"`
+	DesignTemperature   *float64 `json:"design_temperature,omitempty"`
+}
+
+func BoxFurnaceHandler(w http.ResponseWriter, r *http.Request) {
+	// хэндлер для получения данных о коробчатой печи и расчета веса через ml-сервис
+	if r.Method != "POST" {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("Ошибка запроса: неподдерживаемый HTTP-метод"))
+		fmt.Println("Ошибка: неподдерживаемый HTTP-метод")
+		return
+	}
+
+	var reqBody BoxFurnaceRequest
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	err := dec.Decode(&reqBody)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ошибка запроса: неверный формат JSON"))
+		fmt.Println("Ошибка парсинга JSON:", err.Error())
+		return
+	}
+
+	if reqBody.Tag == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ошибка запроса: отсутствует обязательный параметр tag"))
+		fmt.Println("Ошибка: отсутствует обязательный параметр tag")
+		return
+	}
+
+	if reqBody.Duty == nil || *reqBody.Duty <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ошибка запроса: отсутствует или некорректен параметр duty"))
+		fmt.Println("Ошибка: некорректный параметр duty")
+		return
+	}
+
+	if reqBody.StandardGasFlowRate == nil || *reqBody.StandardGasFlowRate <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ошибка запроса: отсутствует или некорректен параметр standard_gas_flow_rate"))
+		fmt.Println("Ошибка: некорректный параметр standard_gas_flow_rate")
+		return
+	}
+
+	payload, err := json.Marshal(reqBody)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Внутренняя ошибка сервера"))
+		fmt.Println("Ошибка сериализации JSON:", err.Error())
+		return
+	}
+
+	endpoint := "http://localhost:8000/box_furnace/estimate"
+	httpReq, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(payload))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Внутренняя ошибка сервера"))
+		fmt.Println("Ошибка создания HTTP-запроса к сервису:", err.Error())
+		return
+	}
+	httpReq.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(httpReq)
+	if err != nil {
+		w.WriteHeader(http.StatusBadGateway)
+		w.Write([]byte("Внутренняя ошибка сервера"))
+		fmt.Println("Ошибка отправки запроса в ML-сервис:", err.Error())
+		return
+	}
+	defer resp.Body.Close()
+
+	w.WriteHeader(resp.StatusCode)
+	_, err = io.Copy(w, resp.Body)
+	if err != nil {
+		w.Write([]byte("Внутренняя ошибка сервера"))
+		fmt.Println("Ошибка отправки ответа клиенту:", err.Error())
+	}
+}

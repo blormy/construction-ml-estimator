@@ -1,0 +1,36 @@
+# секреты и конфигурации
+.env
+
+# данные и датасеты
+*.xlsx
+*.xls
+
+# папки с данными
+data/
+datasets/dataset_inference.csv
+
+# кэш и временные файлы
+.cache/
+**/.cache/
+
+# виртуальное окружение Python
+.venv/
+venv/
+env/
+
+# системные и скрытые файлы
+.DS_Store
+Thumbs.db
+
+# скомпилированные файлы Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# настройки IDE
+.idea/
+.vscode/
+
+# сгенерированные графики
+analysis/*.png
+images/

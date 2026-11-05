@@ -1,0 +1,293 @@
+# config.yaml
+
+api:
+  col_names:
+    tag: "tag"
+    flow: "flow_rate"
+    head: "fluid_head"
+    spec_gravity: "spec_gravity"
+    rpm: "rpm"
+    power_kw: "power_kw"
+    pump_eff: "pump_eff"
+    weight_kg: "weight_kg"
+  critical_cols:
+    - "flow_rate"
+    - "fluid_head"
+  cols_to_clean:
+    - "flow_rate"
+    - "fluid_head"
+    - "spec_gravity"
+    - "rpm"
+    - "power_kw"
+  search_features:
+    - "flow_rate"
+    - "fluid_head"
+  target_features:
+    - "rpm"
+    - "power_kw"
+    - "spec_gravity"
+  feat_eng:
+    diameter_proxy: "diameter_proxy"
+    useful_kw: "useful_kw"
+    weight_log: "weight_log"
+
+equipment:
+  pump_ml:
+    db_params:
+      table_prefix: "pump_data"
+    sheets:
+      features: "TAG_FEATURES"
+      weight: "TAG_WEIGHT"
+    raw_names:
+      tag: "User Tag number"
+      flow: "Liquid flow rate"
+      head: "Fluid head"
+      rpm: "Speed"
+      spec_gravity: "Fluid specific gravity"
+      power_kw: "Driver power"
+      pump_eff: "Pump efficiency"
+      weight_kg: "Equip Weight"
+      tag_weight: "Tag No"
+    col_names:
+      tag: "tag"
+      flow: "flow_rate"
+      head: "fluid_head"
+      rpm: "rpm"
+      spec_gravity: "spec_gravity"
+      power_kw: "power_kw"
+      pump_eff: "pump_eff"
+      weight_kg: "weight_kg"
+    cols_to_convert:
+      - "flow_rate"
+      - "fluid_head"
+      - "rpm"
+      - "spec_gravity"
+      - "power_kw"
+      - "pump_eff"
+      - "weight_kg"
+    feat_eng:
+      diameter_proxy: "diameter_proxy"
+      useful_kw: "useful_kw"
+      weight_log: "weight_log"
+
+  pump_inference:
+    db_params:
+      table_prefix: "pump_inference_data"
+    sheets:
+      features: "TAG_FEATURES"
+      weight: null
+    weight_col_to_drop:
+      - "Name"
+      - "Parent Area"
+      - "Type"
+      - "# of Piping Lines"
+    raw_names:
+      tag: "User Tag number"
+      flow: "Liquid flow rate"
+      head: "Fluid head"
+      rpm: "Speed"
+      spec_gravity: "Fluid specific gravity"
+      power_kw: "Driver power"
+      pump_eff: "Pump efficiency"
+      weight_kg: "Weight: KG"
+      weight_tag: "UserTag"
+    col_names:
+      tag: "tag"
+      flow: "flow_rate"
+      head: "fluid_head"
+      rpm: "rpm"
+      spec_gravity: "spec_gravity"
+      power_kw: "power_kw"
+      pump_eff: "pump_eff"
+      weight_kg: "weight_kg"
+    cols_to_convert:
+      - "flow_rate"
+      - "fluid_head"
+      - "rpm"
+      - "spec_gravity"
+      - "power_kw"
+      - "pump_eff"
+      - "weight_kg"
+    feat_eng:
+      diameter_proxy: "diameter_proxy"
+      useful_kw: "useful_kw"
+      weight_log: "weight_log"
+
+  conveyor_ml:
+    db_params:
+      table_prefix: "conveyor_data"
+    sheets:
+      features: "features"
+      weight: "weight"
+    raw_names:
+      tag: "User Tag number"
+      length: "Conveyor length"
+      width: "Belt width"
+      flow: "Conveyor flow rate"
+      power_hp: "Driver power per section"
+      speed_fpm: "Conveyor speed"
+      walkways_count: "Number of walkways"
+      weight_kg: "Weight"
+      tag_weight: "Tag"
+    col_names:
+      tag: "tag"
+      length: "length_ft"
+      width: "width_in"
+      flow: "flow_tph"
+      power_hp: "power_hp"
+      speed_fpm: "speed_fpm"
+      walkways_count: "walkways_count"
+      weight_kg: "weight_lb"
+    cols_to_convert:
+      - "length_ft"
+      - "width_in"
+      - "flow_tph"
+      - "power_hp"
+      - "speed_fpm"
+      - "walkways_count"
+      - "weight_lb"
+    feat_eng:
+      belt_area: "belt_surface_area"
+      weight_log: "weight_log"
+
+  conveyor_inference:
+    db_params:
+      table_prefix: "conveyor_inference_data"
+    sheets:
+      features: "Belt Conveyor Open"
+      header: [0, 1]
+    raw_names:
+      tag: "User Tag number"
+      length: "Conveyor length"
+      width: "Belt width"
+      flow: "Conveyor flow rate"
+      equip_footpr_x: "Equipment Footprint X"
+      equip_footpr_y: "Equipment Footprint Y"
+      equip_footpr_z: "Equipment Footprint Z"
+      equip_safety_dim_x: "Equipment Safety Dimension X"
+      equip_safety_dim_y: "Equipment Safety Dimension Y"
+      equip_safety_dim_z: "Equipment Safety Dimension Z"
+      weight_kg: "Weight: KG"
+      parent_area: "Parent Area"
+    col_names:
+      tag: "tag"
+      length: "length_ft"
+      width: "width_in"
+      flow: "flow_tph"
+      equip_footpr_x: "eq_footpr_x"
+      equip_footpr_y: "eq_footpr_y"
+      equip_footpr_z: "eq_footpr_z"
+      equip_safety_dim_x: "eq_saf_dim_x"
+      equip_safety_dim_y: "eq_saf_dim_y"
+      equip_safety_dim_z: "eq_saf_dim_z"
+      weight_kg: "weight_kg"
+    cols_to_convert:
+      - "length_ft"
+      - "width_in"
+      - "flow_tph"
+      - "eq_footpr_x"
+      - "eq_footpr_y"
+      - "eq_footpr_z"
+      - "eq_saf_dim_x"
+      - "eq_saf_dim_y"
+      - "eq_saf_dim_z"
+      - "weight_kg"
+
+  vessel_ml:
+    db_params:
+      table_prefix: "vessel_data"
+    sheets:
+      features: "features"
+      weight: "weight"
+    raw_names:
+      tag: "User Tag number"
+      diameter: "Vessel diameter"
+      ss_dist: "Vessel tangent to tangent height"
+      pressure: "Design gauge pressure"
+      temp: "Design temperature"
+      weight_kg: "Weight"
+      tag_weight: "Tag"
+    col_names:
+      tag: "tag"
+      diameter: "diameter"
+      ss_dist: "ss_distance"
+      pressure: "pressure"
+      temp: "temp"
+      weight_kg: "weight_kg"
+    cols_to_convert:
+      - "diameter"
+      - "ss_distance"
+      - "pressure"
+      - "temp"
+      - "weight_kg"
+    feat_eng:
+      volume_proxy: "volume_proxy"
+      pressure_factor: "pressure_factor"
+      weight_log: "weight_log"
+  vessel_inference:
+    db_params:
+      table_prefix: "vessel_inference_data"
+    sheets:
+      features: "features"
+      weight: null
+    raw_names:
+      tag: "User Tag number"
+      diameter: "Vessel diameter"
+      ss_dist: "Vessel tangent to tangent height"
+      pressure: "Design gauge pressure"
+      temp: "Design temperature"
+      weight_kg: "Weight: KG"
+      tag_weight: "Tag"
+    col_names:
+      tag: "tag"
+      diameter: "diameter"
+      ss_dist: "ss_distance"
+      pressure: "pressure"
+      sk_height: "sk_height"
+      leg_height: "leg_height"
+      temp: "temp"
+      weight_kg: "weight_kg"
+    cols_to_convert:
+      - "diameter"
+      - "ss_distance"
+      - "pressure"
+      - "temp"
+      - "sk_height"
+      - "leg_height"
+      - "weight_kg"
+    feat_eng:
+      volume_proxy: "volume_proxy"
+      pressure_factor: "pressure_factor"
+      weight_log: "weight_log"
+
+  drum_ml:
+    db_params:
+      table_prefix: "drum_data"
+    sheets:
+      features: "features"
+      weight: "weight"
+    raw_names:
+      tag: "User Tag number"
+      diameter: "Vessel diameter"
+      ss_dist: "Design tangent to tangent length"
+      pressure: "Design gauge pressure KPAG"
+      temp: "Design temperature"
+      weight_kg: "Weight"
+      tag_weight: "Tag"
+    col_names:
+      tag: "tag"
+      diameter: "ves_diameter"
+      ss_dist: "ss_distance"
+      pressure: "gauge_pres"
+      temp: "temp"
+      weight_kg: "weight_kg"
+    cols_to_convert:
+      - "ves_diameter"
+      - "ss_distance"
+      - "gauge_pres"
+      - "temp"
+      - "weight_kg"
+    feat_eng:
+      volume_proxy: "volume_proxy"
+      surface_area: "surface_area"
+      weight_log: "weight_log"
